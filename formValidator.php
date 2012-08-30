@@ -46,6 +46,11 @@ class formValidator
         }
     }
     
+    public function checkRadio($name, $value)
+    {
+        return in_array($value, (array)$this->$name);
+    }
+    
     public function __set($name, $value)
     {
         $this->form_clean_value[$name] = $value;
@@ -80,6 +85,13 @@ class formValidator
             } elseif (in_array($form_key, $this->expected)) {
                 $this->$form_key = $temp;
             }
+            
+            $form_name_elements[] = $form_key;           
+        }
+        
+        $other_missing = array_diff($this->required, $form_name_elements);
+        if($other_missing){
+            $this->missing = array_merge($this->missing, $other_missing);
         }
     }
 }
