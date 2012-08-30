@@ -1,6 +1,7 @@
 <?php
+namespace OgaraValidator;
 
-class formValidator
+class formValidatorMissing
 {
     //ожидаемые переменные
     private $expected = array();
@@ -11,15 +12,17 @@ class formValidator
     //пропущенные переменные
     private $missing = array();
     
-    //ошибки
-    private $error = array();
-
     //значение которые пришли из формы
     private $form_values = array();
     
     //проверенные и почищенные значения формы
     private $form_clean_value = array();
     
+    /**
+     * заполняет массивы обязательных и ожидаемыз значений
+     * @param array $form_values GET or Post data
+     * @param array $parameters 
+     */
     public function __construct(&$form_values, $parameters)
     {
         $this->form_values = $form_values;
@@ -32,11 +35,20 @@ class formValidator
         $this->validateRequired();
     }
     
+    /**
+     * проверяет пропущен ли элемент формы
+     * @param string $form_name
+     * @return boolean 
+     */
     public function isMissed($form_name)
     {
         return in_array($form_name, $this->missing);
     }
     
+    /**
+     * check missed array on missed form elements
+     * @return boolean 
+     */
     public function haveMissed()
     {
         if($this->missing){
@@ -46,7 +58,13 @@ class formValidator
         }
     }
     
-    public function checkRadio($name, $value)
+    /**
+     * проверяет элементы множественного выбора на ошибки
+     * @param string $name имя элемента множественного выбора
+     * @param string $value ожидаемое значение элемента
+     * @return type boolean
+     */
+    public function checkMultiple($name, $value)
     {
         return in_array($value, (array)$this->$name);
     }
@@ -75,6 +93,11 @@ class formValidator
         $this->required = $required;
     }
     
+    
+    /**
+     * проверяет заполненны ли все обязательные поля и если какие-то поля не заполнены
+     * закидывает из название в массив missed 
+     */
     private function validateRequired()
     {
         foreach ($this->form_values as $form_key => $form_value) {
